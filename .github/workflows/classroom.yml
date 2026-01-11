@@ -1,0 +1,53 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: tests_lab3_problem1.py
+      id: tests_lab3_problem1-py
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: tests_lab3_problem1.py
+        setup-command: sudo -H pip3 install --upgrade pip; sudo -H pip3 install setuptools;
+          sudo -H pip3 install pytest
+        command: pytest -v tests_lab3_problem1.py
+        timeout: 60
+        max-score: 10
+    - name: tests_lab3_problem2.py
+      id: tests_lab3_problem2-py
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: tests_lab3_problem2.py
+        setup-command: sudo -H pip3 install --upgrade pip; sudo -H pip3 install setuptools;
+          sudo -H pip3 install pytest
+        command: pytest -v tests_lab3_problem2.py
+        timeout: 60
+        max-score: 10
+    - name: tests_lab3_problem3.py
+      id: tests_lab3_problem3-py
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: tests_lab3_problem3.py
+        setup-command: sudo -H pip3 install --upgrade pip; sudo -H pip3 install setuptools;
+          sudo -H pip3 install pytest
+        command: pytest -v tests_lab3_problem3.py
+        timeout: 60
+        max-score: 20
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TESTS_LAB3_PROBLEM1-PY_RESULTS: "${{steps.tests_lab3_problem1-py.outputs.result}}"
+        TESTS_LAB3_PROBLEM2-PY_RESULTS: "${{steps.tests_lab3_problem2-py.outputs.result}}"
+        TESTS_LAB3_PROBLEM3-PY_RESULTS: "${{steps.tests_lab3_problem3-py.outputs.result}}"
+      with:
+        runners: tests_lab3_problem1-py,tests_lab3_problem2-py,tests_lab3_problem3-py
